@@ -1,14 +1,38 @@
-import React, {useState} from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native-web";
+import React, {useContext, useState} from "react";
+import { View, Text, TextInput,Alert, Button, StyleSheet } from "react-native";
+import { contexAutentication } from "../../contex/Contex";
 
 export default function LoginScreen({navigation}){
     const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
+    const [pass, setPassword] = useState('');
+    const {user, password} = useContext(contexAutentication);
     const handleLogin = () =>{
-        
+      if (!user || !password) {
+        // No user registered yet, show message or disable login
+        console.log('Aún no se ha registrado ningún usuario.');
+        return;
+      }
+      if(username !== user || pass !== password){
+        console.log(user, password);
+        showAlert();
+        return;
+      }
         navigation.navigate('Home',{username});
     };
+
+    const showAlert = () =>
+      Alert.alert(
+        'Error',
+        'Usuario o contraseña incorrectos',
+        [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ],
+      );
+
+
+    const Register = () => {
+      navigation.navigate('Register')
+    }
 
     return(
         <View style={styles.container} >
@@ -22,13 +46,13 @@ export default function LoginScreen({navigation}){
                 <TextInput
                 style={styles.input}
                 placeholder='Contraseña'
-                value={password}
+                value={pass}
                 onChangeText={setPassword}
                 />
                 <View style={styles.buttonLogin}>
                     <Button  title='Iniciar' onPress={handleLogin} />
                 </View>
-                <Button title='Registrarse' onPress={handleLogin} />
+                <Button title='Registrarse' onPress={Register} />
         </View>
     );
 }
